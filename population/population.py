@@ -1,7 +1,8 @@
+#!/usr/bin/env python
+
 #import dependencies
 import numpy as np
 import random as rnd
-
 
 def max_population_year(people_list):
         '''Given a list of of people with their birth and death years from 
