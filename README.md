@@ -40,15 +40,18 @@ def max_population_year(people_list):
         year_list = np.zeros(101)
         #loop over the list of people and get the birth and death years
         for person in people_list:
-            birth, death = person
-            #map actual year to index in year_list
-            #TODO check to years to be between 1900-2000
-            birth = birth - 1900
-            death = death - 1900
-            #increment the values in the year_list for the years on which the current
-            #person was alive
-            #beware of numpy's slice access from [initial_index, final_index)
-            year_list[birth:death + 1] = year_list[birth:death + 1] + 1
+              birth, death = person
+              #check to years to be between 1900-2000, send exceprion upstream
+              if birth < 1900 or birth > 2000:
+                  raise ValueError('Valid birth value must be between [1900, 2000]')
+              if death < 1900 or death > 2000:
+                  raise ValueError('Valid death value must be between [1900, 2000]')
+              #map actual year to index in year_list
+              birth = birth - 1900
+              death = death - 1900
+              #increment the values in the year_list for the years on which the current person was alive
+              #beware of numpy's slice access from [initial-index, final-index)
+              year_list[birth:death + 1] = year_list[birth:death + 1] + 1
 
         max_population = year_list.max()
         #find the year (or years) with the maximum count, these years are the years
