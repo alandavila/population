@@ -5,7 +5,7 @@ import numpy as np
 import random as rnd
 
 def max_population_year(people_list):
-        '''Given a list of of people with their birth and death years from 
+        '''Given a list of people with their birth and death years from 
         [1900, 2000], find the year(s) with most number of people alive
         
         Input Parameters
@@ -17,7 +17,7 @@ def max_population_year(people_list):
         max_year_list: list of years that had a population equal to the maximum 
         population obtained in the period 1900, 2000
         
-        year_list: list with length of 100 that contains the population per year
+        year_list: list with length of 101 that contains the population per year
         
         >>> max_population_year([[1900,1902]])[0]
         [1900, 1901, 1902]
@@ -35,11 +35,13 @@ def max_population_year(people_list):
         #loop over the list of people and get the birth and death years
         for person in people_list:
             birth, death = person
-            #check to years to be between 1900-2000, send exceprion upstream
+            #check the years to be between 1900-2000, send exception upstream
             if birth < 1900 or birth > 2000:
                 raise ValueError('Valid birth value must be between [1900, 2000]')
             if death < 1900 or death > 2000:
                 raise ValueError('Valid death value must be between [1900, 2000]')
+            if birth > death:
+                raise ValueError('Birth year must be less or equal to death year')
             #map actual year to index in year_list
             birth = birth - 1900
             death = death - 1900
@@ -58,7 +60,8 @@ def max_population_year(people_list):
     
 def generate_sample(n_samples):
     '''test function to generate a sample of people with birth and death dates
-    betwee 1900 and 2000
+    between 1900 and 2000. Birth dates are selected randomly between 1900-2000
+    and death dates are selected randomly between birth-2000
     
     Input Parameters
     ----------------

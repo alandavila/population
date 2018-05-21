@@ -11,7 +11,7 @@ It is called **max_population_year:**
 
 ```python
 def max_population_year(people_list):
-        '''Given a list of of people with their birth and death years from
+        '''Given a list of people with their birth and death years from
         [1900, 2000], find the year(s) with most number of people alive
 
         Input Parameters
@@ -23,7 +23,7 @@ def max_population_year(people_list):
         max_year_list: list of years that had a population equal to the maximum
         population obtained in the period 1900, 2000
 
-        year_list: list with length of 100 that contains the population per year
+        year_list: list with length of 101 that contains the population per year
 
         >>> max_population_year([[1900,1902]])[0]
         [1900, 1901, 1902]
@@ -35,17 +35,19 @@ def max_population_year(people_list):
         [2000]
 
         '''
-        #create an array with 100 elements to represent each year between 1900-2000
+        #create an array with 101 elements to represent each year between 1900-2000
         #setting its values to zero; index 0-->1900, 1-->1901,  ... , 100 --> 2000
         year_list = np.zeros(101)
         #loop over the list of people and get the birth and death years
         for person in people_list:
               birth, death = person
-              #check to years to be between 1900-2000, send exceprion upstream
+              #check the years to be between 1900-2000, send exception upstream
               if birth < 1900 or birth > 2000:
                   raise ValueError('Valid birth value must be between [1900, 2000]')
               if death < 1900 or death > 2000:
                   raise ValueError('Valid death value must be between [1900, 2000]')
+              if birth > death:
+                  raise ValueError('Birth year must be less or equal to death year')
               #map actual year to index in year_list
               birth = birth - 1900
               death = death - 1900
@@ -84,6 +86,38 @@ sns.set()
 * 1900 <= birth year  <= 2000
 * birth year <= death year <= 200
 
+I wrote a function that generates "N" random birth dates and death dates with
+the constraints listed above.
+
+```python
+def generate_sample(n_samples):
+    '''test function to generate a sample of people with birth and death dates
+    between 1900 and 2000. Birth dates are selected randomly between 1900-2000
+    and death dates are selected randomly between birth-2000
+
+    Input Parameters
+    ----------------
+    n_sample: int, number of samples to generate
+
+    Output Parameters
+    ----------------
+    samples: list of n_samples lenght. Each entry contains a randomly generated
+    birth and death dates as [birht, death] within 1900 and 2000 and the
+    death >= birth
+
+    '''
+    samples = []
+    #loop over n_samples
+    for sample in np.arange(n_samples):
+        #pick a random birth date: 1900 <= birth <= 2000
+        birth = rnd.randint(1900,2000)
+        #pick a random death date: birth <= death <= 200
+        death = rnd.randint(birth, 2000)
+        #add sample to our list
+        samples.append([birth, death])
+    return samples   
+
+```
 
 ```python
 #generate population sample using "generate_sample" I wrote at population/population.py
@@ -134,13 +168,12 @@ for year in most_alive_years:
 
 ```python
 def analyze(sample_size = 30):
-    total = sample_size
-    people = population.generate_sample(total)
+    people = population.generate_sample(sample_size)
     most_alive_years, population_per_year = population.max_population_year(people)
     print(f'The year(s) with the most number of people alive is: {most_alive_years}')
     fig = plt.figure(figsize=(15,10))
     ax = fig.add_subplot(1,1,1)
-    ax.set_title(f'Number of people alive per year ({total} Total)', fontsize=30)
+    ax.set_title(f'Number of people alive per year ({sample_size} Total)', fontsize=30)
     ax.bar(1900 + np.arange(0,len(population_per_year)),population_per_year)
     ax.set_xlabel('Year', size=20)
     ax.set_ylabel('People alive', size=20)
